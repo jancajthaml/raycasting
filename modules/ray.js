@@ -16,7 +16,7 @@ class Ray {
   }
 
   render(viewport, buffer) {
-    const scale = 10
+    const scale = 20
     const step = 0.0174533/scale
 
     let ra = this.player.angle - (step*(FOV* scale)/2)
@@ -110,14 +110,10 @@ class Ray {
         rx = rvx
         ry = rvy
         distanceT = distanceV
-        buffer.fillStyle = "red"
-        buffer.strokeStyle = "red"
       } else {
         rx = rhx
         ry = rhy
         distanceT = distanceH
-        buffer.fillStyle = "darkred"
-        buffer.strokeStyle = "darkred"
       }
 
       let ca = this.player.angle - ra
@@ -136,13 +132,8 @@ class Ray {
       }
       let lineO = viewport.height/2 - lineH/2
 
-      buffer.fillRect(r*size,lineO,size,lineH)
-      /*
-      buffer.lineWidth = 1
-      buffer.beginPath()
-      buffer.moveTo(this.player.x, this.player.y)
-      buffer.lineTo(rx, ry)
-      buffer.stroke()*/
+      buffer.fillStyle = `rgb(${Math.min(255, 3*255*(lineH/viewport.height))},0,0)`
+      buffer.fillRect(r*size, lineO, size, lineH)
 
       ra += step
       if (ra < 0) {
