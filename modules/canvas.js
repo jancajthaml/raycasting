@@ -19,16 +19,21 @@ class Canvas {
     this.pixelRatio = window.devicePixelRatio
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
-    this.viewport = new Rectangle()
+    this.viewport = new Rectangle(0, 0, this.buffer.canvas.width, this.buffer.canvas.height)
     window.addEventListener('resize', this.onResize)
     this.onResize()
   }
 
   onResize() {
     const wrapper = this.screen.canvas.parentElement
-    this.resizeEvent = {
-      width: wrapper.clientWidth * this.pixelRatio,
-      height: wrapper.clientHeight * this.pixelRatio,
+    const nextWidth = wrapper.clientWidth * this.pixelRatio
+    const nextHeight = wrapper.clientHeight * this.pixelRatio
+
+    if (nextWidth !== this.viewport.width || nextHeight !== this.viewport.height) {
+      this.resizeEvent = {
+        width: wrapper.clientWidth * this.pixelRatio,
+        height: wrapper.clientHeight * this.pixelRatio,
+      }
     }
   }
 
