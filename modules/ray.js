@@ -1,8 +1,13 @@
 
 const FOV = 70
 
+const PI = Math.PI
+const PI_2 = PI * 2
+const PI_HALF = PI / 2
+const PI_75 = 3 * PI_HALF
+
 function distance(ax, ay, bx, by) {
-  return Math.sqrt((bx-ax) * (bx-ax) + (by-ay)*(by-ay))
+  return Math.sqrt((bx-ax) * (bx-ax) + (by-ay) * (by-ay))
 }
 
 class Ray {
@@ -16,25 +21,23 @@ class Ray {
   }
 
   renderWalls(viewport, buffer) {
-    const scale = 4
+    const scale = 10
     const step = 0.0174533/scale
 
     let angle = Math.atan2(this.player.dy, this.player.dx)
-    if (angle > 2 * Math.PI) {
-      angle -= 2 * Math.PI
-    }
-    if (angle < 0) {
-      angle += 2 * Math.PI
+    if (angle > PI_2) {
+      angle -= PI_2
+    } else if (angle < 0) {
+      angle += PI_2
     }
 
     let ra = angle - (step*(FOV* scale)/2)
-    const size = Math.ceil(viewport.width / (FOV* scale))
+    const size = Math.ceil(viewport.width / (FOV * scale))
 
     if (ra < 0) {
-      ra += 2 * Math.PI
-    }
-    if (ra > 2 * Math.PI) {
-      ra -= 2 * Math.PI
+      ra += PI_2
+    } else if (ra > PI_2) {
+      ra -= PI_2
     }
 
     for (let r = 0 ; r < (FOV* scale) ; r++) {
@@ -48,19 +51,19 @@ class Ray {
 
       dof = 0
       const aTan = -1 / Math.tan(ra)
-      if (ra > Math.PI) {
+      if (ra > PI) {
         rhy = ((this.player.y >> 6)<<6) - 0.0001
         rhx = (this.player.y - rhy) * aTan + this.player.x
         yo = -64
         xo = 64 * aTan
       }
-      if (ra < Math.PI) {
+      if (ra < PI) {
         rhy = ((this.player.y >> 6)<<6) + 64
         rhx = (this.player.y - rhy) * aTan + this.player.x
         yo = 64
         xo = -64 * aTan
       }
-      if (ra === 0 || ra === Math.PI) {
+      if (ra === 0 || ra === PI) {
         rhx = this.player.x
         rhy = this.player.y
         dof = 8
@@ -81,19 +84,19 @@ class Ray {
 
       dof = 0
       const nTan = -Math.tan(ra)
-      if (ra > Math.PI/2 && ra < 3 * Math.PI/2) {
+      if (ra > PI_HALF && ra < PI_75) {
         rvx = ((this.player.x >> 6)<<6) - 0.0001
         rvy = (this.player.x - rvx) * nTan + this.player.y
         xo = -64
         yo = 64 * nTan
       }
-      if (ra < Math.PI/2 || ra > 3 * Math.PI/2) {
+      if (ra < PI_HALF || ra > PI_75) {
         rvx = ((this.player.x >> 6)<<6) + 64
         rvy = (this.player.x - rvx) * nTan + this.player.y
         xo = 64
         yo = -64 * nTan
       }
-      if (ra === 0 || ra === Math.PI) {
+      if (ra === 0 || ra === PI) {
         rvx = this.player.x
         rvy = this.player.y
         dof = 8
@@ -126,10 +129,9 @@ class Ray {
 
       let ca = angle - ra
       if (ca < 0) {
-        ca += 2 * Math.PI
-      }
-      if (ca > 2 * Math.PI) {
-        ca -= 2 * Math.PI
+        ca += PI_2
+      } else if (ca > PI_2) {
+        ca -= PI_2
       }
 
       perpWallDist *= Math.cos(ca)
@@ -137,19 +139,23 @@ class Ray {
       if (lineH > viewport.height) {
         lineH = viewport.height
       }
-      let lineO = viewport.height/2 - lineH/2
+      let lineO = viewport.height /2 - lineH / 2
 
-      const color = Math.max(10, Math.min(255, 3*255*(lineH/viewport.height)))
+      let color = 3*255*(lineH/viewport.height)
+      if (color < 10) {
+        color = 10
+      } else if (color > 255) {
+        color = 255
+      }
 
       buffer.fillStyle = `rgb(${color},0,0)`
       buffer.fillRect(r*size, lineO, size, lineH)
 
       ra += step
       if (ra < 0) {
-        ra += 2 * Math.PI
-      }
-      if (ra > 2 * Math.PI) {
-        ra -= 2 * Math.PI
+        ra += PI_2
+      } else if (ra > PI_2) {
+        ra -= PI_2
       }
     }
   }
