@@ -51,12 +51,10 @@ class Canvas {
       this.resizeEvent = null
     }
     this.buffer.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0)
-    this.buffer.fillStyle = "green"
-    this.buffer.fillRect(0, 0, this.viewport.width, this.viewport.height/2)
-    this.buffer.fillStyle = "blue"
-    this.buffer.fillRect(0, this.viewport.height/2, this.viewport.width, this.viewport.height)
+    this.buffer.fillStyle = "black"
+    this.buffer.fillRect(0, 0, this.viewport.width, this.viewport.height)
     this.children.forEach((child) => {
-      child.render(this.viewport, this.buffer)
+      child.render(this.viewport, this.buffer, currentTime)
     })
     this.updating = false
     this.render()
