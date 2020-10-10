@@ -16,7 +16,7 @@ class Ray {
   }
 
   renderWalls(viewport, buffer) {
-    const scale = 4
+    const scale = 2
     const step = 0.0174533/scale
 
     let angle = Math.atan2(this.player.dy, this.player.dx)
