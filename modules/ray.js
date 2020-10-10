@@ -1,7 +1,7 @@
 
-const FOV = 60
+const FOV = 70
 
-function distance(ax, ay, bx, by, angle) {
+function distance(ax, ay, bx, by) {
   return Math.sqrt((bx-ax) * (bx-ax) + (by-ay)*(by-ay))
 }
 
@@ -15,11 +15,19 @@ class Ray {
     this.map = map
   }
 
-  render(viewport, buffer) {
-    const scale = 20
+  renderWalls(viewport, buffer) {
+    const scale = 4
     const step = 0.0174533/scale
 
-    let ra = this.player.angle - (step*(FOV* scale)/2)
+    let angle = Math.atan2(this.player.dy, this.player.dx)
+    if (angle > 2 * Math.PI) {
+      angle -= 2 * Math.PI
+    }
+    if (angle < 0) {
+      angle += 2 * Math.PI
+    }
+
+    let ra = angle - (step*(FOV* scale)/2)
     const size = Math.ceil(viewport.width / (FOV* scale))
 
     if (ra < 0) {
@@ -29,7 +37,7 @@ class Ray {
       ra -= 2 * Math.PI
     }
 
-    for (let r = 0 ; r<(FOV* scale) ; r++) {
+    for (let r = 0 ; r < (FOV* scale) ; r++) {
       let rhy, rhx, rvy, rvx
 
       let distanceH = Number.MAX_SAFE_INTEGER
@@ -62,7 +70,7 @@ class Ray {
         let my = rhy >> 6
         let mp = Math.round(my * 8 + mx)
         if (mp >= 0 && mp<64 && this.map.data[mp] != 0) {
-          distanceH = distance(this.player.x, this.player.y, rhx, rhy, ra)
+          distanceH = distance(this.player.x, this.player.y, rhx, rhy)
           dof = 8
         } else {
           rhx += xo
@@ -95,7 +103,7 @@ class Ray {
         let my = rvy >> 6
         let mp = Math.round(my * 8 + mx)
         if (mp >= 0 && mp<64 && this.map.data[mp] != 0) {
-          distanceV = distance(this.player.x, this.player.y, rvx, rvy, ra)
+          distanceV = distance(this.player.x, this.player.y, rvx, rvy)
           dof = 8
         } else {
           rvx += xo
@@ -104,19 +112,19 @@ class Ray {
         }
       }
 
-      let rx, ry, distanceT
+      let rx, ry, perpWallDist
 
       if (distanceV<distanceH) {
         rx = rvx
         ry = rvy
-        distanceT = distanceV
+        perpWallDist = distanceV
       } else {
         rx = rhx
         ry = rhy
-        distanceT = distanceH
+        perpWallDist = distanceH
       }
 
-      let ca = this.player.angle - ra
+      let ca = angle - ra
       if (ca < 0) {
         ca += 2 * Math.PI
       }
@@ -124,15 +132,16 @@ class Ray {
         ca -= 2 * Math.PI
       }
 
-      distanceT *= Math.cos(ca)
-
-      let lineH = (20*viewport.height)/distanceT
+      perpWallDist *= Math.cos(ca)
+      let lineH = (64*viewport.height) / perpWallDist
       if (lineH > viewport.height) {
         lineH = viewport.height
       }
       let lineO = viewport.height/2 - lineH/2
 
-      buffer.fillStyle = `rgb(${Math.min(255, 3*255*(lineH/viewport.height))},0,0)`
+      const color = Math.max(10, Math.min(255, 3*255*(lineH/viewport.height)))
+
+      buffer.fillStyle = `rgb(${color},0,0)`
       buffer.fillRect(r*size, lineO, size, lineH)
 
       ra += step
@@ -143,9 +152,11 @@ class Ray {
         ra -= 2 * Math.PI
       }
     }
-
   }
 
+  render(viewport, buffer, currentTime) {
+    this.renderWalls(viewport, buffer)
+  }
 
 }
 

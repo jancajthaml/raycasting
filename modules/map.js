@@ -2,8 +2,12 @@
 class WorldMap {
 
   #data
+  #dx
+  #dy
 
   constructor() {
+    this.dx = 0
+    this.dy = -1
     this.data = [
       1,1,1,1,1,1,1,1,
       1,0,0,0,0,1,0,1,
