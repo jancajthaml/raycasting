@@ -1,6 +1,6 @@
 
-const MOVE_SPEED = 9 * 16
-const ROTATE_SPEED = 3
+const MOVE_SPEED = 10 * 16
+const ROTATE_SPEED = 2
 
 class Controls {
 
@@ -64,7 +64,6 @@ class Controls {
         }
         case 'arrowright':
         case 'keyd': {
-
           const oldDirX = this.player.dx
           this.player.dx = this.player.dx * Math.cos(rotateSpeed) - this.player.dy * Math.sin(rotateSpeed)
           this.player.dy = oldDirX * Math.sin(rotateSpeed) + this.player.dy * Math.cos(rotateSpeed)

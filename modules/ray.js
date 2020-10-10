@@ -1,10 +1,18 @@
 
-const FOV = 70
+const FOV = 60
 
+/*
 const PI = Math.PI
 const PI_2 = PI * 2
 const PI_HALF = PI / 2
 const PI_75 = 3 * PI_HALF
+*/
+
+const PI_TWO = Math.PI * 2;
+const PI_HALF = Math.PI / 2;
+const VOF = FOV * (Math.PI / 180);
+const VOF_HALF = VOF / 2;
+const TILE = 64;
 
 function distance(ax, ay, bx, by) {
   return Math.sqrt((bx-ax) * (bx-ax) + (by-ay) * (by-ay))
@@ -20,7 +28,122 @@ class Ray {
     this.map = map
   }
 
+  renderBackground(viewport, buffer) {
+    var grd = buffer.createLinearGradient(0,viewport.height/2,0,0)
+    grd.addColorStop(0, "black")
+    grd.addColorStop(1, "green")
+    buffer.fillStyle = grd
+    buffer.fillRect(0, 0, viewport.width, viewport.height/2)
+
+    grd = buffer.createLinearGradient(0, viewport.height/2, 0, viewport.height)
+    grd.addColorStop(0, "black")
+    grd.addColorStop(1, "blue")
+    buffer.fillStyle = grd
+    buffer.fillRect(0, viewport.height/2, viewport.width, viewport.height)
+  }
+
+  getLine(x1, y1, x2, y2, lineElement) {
+    var dx = Math.abs(x2 - x1);
+    var dy = Math.abs(y2 - y1);
+    var sx = (x1 < x2) ? 1 : -1;
+    var sy = (y1 < y2) ? 1 : -1;
+    var err = dx - dy;
+    var e2;
+    var perviousTileX = 0;
+    var perviousTileY = 0;
+
+    while (!((x1 == x2) && (y1 == y2))) {
+      e2 = err << 1;
+      if (e2 > -dy) {
+        err -= dy;
+        x1 += sx;
+      }
+      else if (e2 < dx) {
+        err += dx;
+        y1 += sy;
+      }
+
+      var mapX = Math.round(x1 / TILE);
+      var mapY = Math.round(y1 / TILE);
+      //if ()
+      if (this.map.data[mapY][mapX]) {
+        lineElement.y = y1;
+        lineElement.x = x1;
+        //lineElement.texture = textures[this.map[mapY][mapX]];
+        //lineElement.north = perviousTileX == mapX;
+        //lineElement.part = lineElement.north ? x1 - (mapX * TILE) : y1 - (mapY * TILE)
+        return;
+      }
+      perviousTileX = mapX;
+      perviousTileY = mapY;
+    }
+  }
+
   renderWalls(viewport, buffer) {
+    //this.draw = function(ctx) {
+      //  this.drawBackgound(ctx);
+
+    var lineElement = {
+      y: 0,
+      x: 0,
+      //texture: null,
+      //north: false,
+      //dist: 0,
+      //part: 0
+    };
+
+    const RAY_ANGLE = VOF / viewport.width
+    const HALF_H = viewport.height / 2
+    let angle = Math.atan2(this.player.dy, this.player.dx)
+    let i = 0
+
+
+    for (let rayAngle = -VOF_HALF; rayAngle < VOF_HALF; rayAngle += RAY_ANGLE) {
+      const dx = this.player.x + Math.cos(angle + rayAngle) * 100;
+      const dy = this.player.y + Math.sin(angle + rayAngle) * 100;
+
+      this.getLine(this.player.x, this.player.y, dx, dy, lineElement);
+
+      var vX = this.player.x - lineElement.x;
+      var vY = this.player.y - lineElement.y;
+      lineElement.dist = Math.sqrt(vX * vX + vY * vY) * Math.cos(rayAngle);
+
+      var wallFactor = (HALF_H / lineElement.dist * TILE / 2) * 2
+      //var texture = lineElement.texture;
+
+      //if (texture)
+      //ctx.drawImage(texture, Math.floor(lineElement.part * (texture.width / TILE)), 0, 1, texture.height, i, SCR_H_HALF - wallFactor, 1, wallFactor * 2)
+
+      //buffer.globalAlpha = lineElement.dist / 1000 * (lineElement.north ? 1 : 1.5);
+
+      let color = 255 * (1-(lineElement.dist / 1000 * (lineElement.north ? 1 : 1.5)))
+      if (color < 10) {
+        color = 10
+      } else if (color > 255) {
+        color = 255
+      }
+
+      buffer.strokeStyle = `rgb(${color},0,0)`
+      buffer.beginPath();
+      buffer.moveTo(i, HALF_H - wallFactor);
+      buffer.lineTo(i, HALF_H + wallFactor);
+      //buffer.closePath();
+      buffer.stroke();
+      //buffer.globalAlpha = 1;
+
+      //if (i == viewport.width / 2) {
+        //this.player.moveableForward = lineElement.dist > 10;
+      //}
+
+      i++;
+    }
+
+        //this.drawMap(ctx);
+    //}
+  }
+
+  /*
+  renderWalls2(viewport, buffer) {
     const scale = 10
     const step = 0.0174533/scale
 
@@ -159,8 +282,10 @@ class Ray {
       }
     }
   }
+  */
 
   render(viewport, buffer, currentTime) {
+    this.renderBackground(viewport, buffer)
     this.renderWalls(viewport, buffer)
   }
 

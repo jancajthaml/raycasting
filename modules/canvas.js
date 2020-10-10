@@ -16,7 +16,7 @@ class Canvas {
     const ref = document.getElementById(elemenId)
     this.screen = ref.getContext('bitmaprenderer')
     this.buffer = new OffscreenCanvas(this.screen.canvas.width, this.screen.canvas.height).getContext('2d', { alpha: false, desynchronized: true })
-    this.pixelRatio = window.devicePixelRatio
+    this.pixelRatio = window.devicePixelRatio / 16
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
     this.viewport = new Rectangle(0, 0, this.buffer.canvas.width, this.buffer.canvas.height)
@@ -38,6 +38,7 @@ class Canvas {
   }
 
   render() {
+    this.screen.imageSmoothingEnabled = false
     this.screen.transferFromImageBitmap(this.buffer.canvas.transferToImageBitmap())
   }
 
@@ -53,6 +54,7 @@ class Canvas {
       this.viewport.height = this.resizeEvent.height / this.pixelRatio
       this.resizeEvent = null
     }
+    this.buffer.imageSmoothingEnabled = false
     this.buffer.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0)
     this.children.forEach((child) => {
       child.render(this.viewport, this.buffer, currentTime)
