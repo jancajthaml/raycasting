@@ -2,6 +2,8 @@
 class WorldMap {
 
   #data
+  #width
+  #height
   #dx
   #dy
 
@@ -25,22 +27,23 @@ class WorldMap {
       [ 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
       [ 5, 7, 8, 9, 8, 7, 7, 8, 9, 8, 7, 8, 3, 3, 3, 3, 3, 3, 8, 7]
     ]
+    this.height = this.data.length
+    this.width = this.data[0].length
+    this.data = [].concat.apply([], this.data)
   }
 
   render(viewport, buffer) {
     buffer.lineWidth = 1
     buffer.strokeStyle = "red"
     buffer.globalAlpha = 0.5
-    for (let y = 0 ; y < this.data.length ; y++) {
-      for (let x = 0 ; x < this.data[0].length ; x++) {
-        if (this.data[y][x] === 0) {
+    for (let y = 0 ; y < this.height ; y++) {
+      for (let x = 0 ; x < this.width ; x++) {
+        if (this.data[y * this.width + x] === 0) {
           buffer.fillStyle = "black"
         } else {
           buffer.fillStyle = "white"
         }
-        //buffer.fillRect((x*64), (y*64), 64, 64)
-        buffer.fillRect(x*64, y*64, 64, 64)
-
+        buffer.fillRect(x*30, y*30, 30, 30)
       }
     }
     buffer.globalAlpha = 1
@@ -50,3 +53,6 @@ class WorldMap {
 
 
 export default WorldMap
+
+
+

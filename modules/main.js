@@ -11,10 +11,10 @@ const controls = new Controls(player, map)
 const rays = [
   new Ray(player, map),
 ]
-const canvas = new Canvas('canvas', [controls, ...rays /*, map, player*/])
+const canvas = new Canvas('canvas', [controls, ...rays , map, player])
 
 window.addEventListener("load", function() {
   player.x = 224
   player.y = 400
-  new Loop(20, [canvas]).run()
+  new Loop(30, [canvas]).run()
 })

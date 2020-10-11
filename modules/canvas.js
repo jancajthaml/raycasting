@@ -1,5 +1,7 @@
 import Rectangle from './rectangle.js'
 
+const PIXEL_SIZE = 1
+
 class Canvas {
 
   #screen
@@ -16,7 +18,7 @@ class Canvas {
     const ref = document.getElementById(elemenId)
     this.screen = ref.getContext('bitmaprenderer')
     this.buffer = new OffscreenCanvas(this.screen.canvas.width, this.screen.canvas.height).getContext('2d', { alpha: false, desynchronized: true })
-    this.pixelRatio = window.devicePixelRatio / 16
+    this.pixelRatio = window.devicePixelRatio // 16
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
     this.viewport = new Rectangle(0, 0, this.buffer.canvas.width, this.buffer.canvas.height)
@@ -50,12 +52,12 @@ class Canvas {
     if (this.resizeEvent) {
       this.screen.canvas.width = this.buffer.canvas.width = this.resizeEvent.width
       this.screen.canvas.height = this.buffer.canvas.height = this.resizeEvent.height
-      this.viewport.width = this.resizeEvent.width / this.pixelRatio
-      this.viewport.height = this.resizeEvent.height / this.pixelRatio
+      this.viewport.width = this.resizeEvent.width / this.pixelRatio / PIXEL_SIZE
+      this.viewport.height = this.resizeEvent.height / this.pixelRatio / PIXEL_SIZE
       this.resizeEvent = null
     }
     this.buffer.imageSmoothingEnabled = false
-    this.buffer.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0)
+    this.buffer.setTransform(this.pixelRatio * PIXEL_SIZE, 0, 0, this.pixelRatio * PIXEL_SIZE, 0, 0)
     this.children.forEach((child) => {
       child.render(this.viewport, this.buffer, currentTime)
     })
