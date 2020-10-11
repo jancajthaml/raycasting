@@ -1,3 +1,4 @@
+import Point from './point.js'
 
 const FOV = 60
 
@@ -76,10 +77,7 @@ class Ray {
   }
 
   renderWalls(viewport, buffer) {
-    const lineElement = {
-      y: 0,
-      x: 0,
-    };
+    const lineElement = new Point(0, 0)
 
     const RAY_ANGLE = VOF / viewport.width
     const HALF_H = viewport.height / 2
@@ -108,7 +106,6 @@ class Ray {
       buffer.moveTo(i, HALF_H - wallFactor);
       buffer.lineTo(i, HALF_H + wallFactor);
       buffer.stroke();
-
 
       i++;
     }

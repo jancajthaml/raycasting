@@ -42,14 +42,18 @@ class Controls {
       switch (key) {
         case 'arrowup':
         case 'keyw': {
-          this.player.x += this.player.dx * moveSpeed
-          this.player.y += this.player.dy * moveSpeed
+          const nextX = this.player.x + (this.player.dx * moveSpeed)
+          const nextY = this.player.x + (this.player.dx * moveSpeed)
+          this.player.x = nextX
+          this.player.y = nextY
           break
         }
         case 'arrowdown':
         case 'keys': {
-          this.player.x -= this.player.dx * moveSpeed
-          this.player.y -= this.player.dy * moveSpeed
+          const nextX = this.player.x - (this.player.dx * moveSpeed)
+          const nextY = this.player.x - (this.player.dx * moveSpeed)
+          this.player.x = nextX
+          this.player.y = nextY
           break
         }
         case 'arrowleft':
