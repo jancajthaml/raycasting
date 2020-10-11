@@ -43,7 +43,7 @@ class Controls {
         case 'arrowup':
         case 'keyw': {
           const nextX = this.player.x + (this.player.dx * moveSpeed)
-          const nextY = this.player.y + (this.player.dx * moveSpeed)
+          const nextY = this.player.y + (this.player.dy * moveSpeed)
           this.player.x = nextX
           this.player.y = nextY
           break
@@ -51,7 +51,7 @@ class Controls {
         case 'arrowdown':
         case 'keys': {
           const nextX = this.player.x - (this.player.dx * moveSpeed)
-          const nextY = this.player.y - (this.player.dx * moveSpeed)
+          const nextY = this.player.y - (this.player.dy * moveSpeed)
           this.player.x = nextX
           this.player.y = nextY
           break
