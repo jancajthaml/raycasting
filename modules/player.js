@@ -21,9 +21,7 @@ class Player {
     buffer.fillStyle = "yellow"
     buffer.strokeStyle = "yellow"
     buffer.fillRect(this.x - 1, this.y - 1, 2, 2)
-
     buffer.lineWidth = 1
-
     buffer.beginPath()
     buffer.moveTo(this.x, this.y)
     buffer.lineTo(this.x+this.dx*10, this.y+this.dy*10)

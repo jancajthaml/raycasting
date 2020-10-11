@@ -1,6 +1,6 @@
 
-const MOVE_SPEED = 9 * 16
-const ROTATE_SPEED = 3
+const MOVE_SPEED = 10 * 16
+const ROTATE_SPEED = 2
 
 class Controls {
 
@@ -42,14 +42,18 @@ class Controls {
       switch (key) {
         case 'arrowup':
         case 'keyw': {
-          this.player.x += this.player.dx * moveSpeed
-          this.player.y += this.player.dy * moveSpeed
+          const nextX = this.player.x + (this.player.dx * moveSpeed)
+          const nextY = this.player.x + (this.player.dx * moveSpeed)
+          this.player.x = nextX
+          this.player.y = nextY
           break
         }
         case 'arrowdown':
         case 'keys': {
-          this.player.x -= this.player.dx * moveSpeed
-          this.player.y -= this.player.dy * moveSpeed
+          const nextX = this.player.x - (this.player.dx * moveSpeed)
+          const nextY = this.player.x - (this.player.dx * moveSpeed)
+          this.player.x = nextX
+          this.player.y = nextY
           break
         }
         case 'arrowleft':
@@ -64,7 +68,6 @@ class Controls {
         }
         case 'arrowright':
         case 'keyd': {
-
           const oldDirX = this.player.dx
           this.player.dx = this.player.dx * Math.cos(rotateSpeed) - this.player.dy * Math.sin(rotateSpeed)
           this.player.dy = oldDirX * Math.sin(rotateSpeed) + this.player.dy * Math.cos(rotateSpeed)

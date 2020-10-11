@@ -11,7 +11,7 @@ const controls = new Controls(player, map)
 const rays = [
   new Ray(player, map),
 ]
-const canvas = new Canvas('canvas', [controls, ...rays, /*map, player*/])
+const canvas = new Canvas('canvas', [controls, ...rays , map, player])
 
 window.addEventListener("load", function() {
   player.x = 224
